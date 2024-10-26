@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Sender</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), /* Dark overlay */
+                url('https://share1.cloudhq-mkt3.net/69c5b2d0904ca0.jpeg'); /* Replace with a high-res image URL */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 400px; /* Fixed width for better layout */
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9); /* Slightly more opaque */
+            border-radius: 10px; /* More rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow */
+            transition: transform 0.3s ease; /* Add a subtle hover effect */
+        }
+
+        .container:hover {
+            transform: scale(1.02); /* Slight zoom effect on hover */
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50; /* A fresh green color */
+            margin-bottom: 20px; /* Spacing below the title */
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #4CAF50; /* Green border */
+            border-radius: 5px;
+            font-size: 16px; /* Larger font for better readability */
+            transition: border-color 0.3s ease; /* Smooth border color transition */
+        }
+
+        input:focus, textarea:focus {
+            border-color: #2E7D32; /* Darker green on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        button {
+            width: 48%;
+            padding: 12px;
+            background-color: #4CAF50; /* Main button color */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px; /* Larger font size */
+            transition: background-color 0.3s ease; /* Smooth background transition */
+        }
+
+        button:hover {
+            background-color: #388E3C; /* Darker green on hover */
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Darker background for popup */
+        }
+
+        .popup-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px; /* Fixed width for the popup */
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Shadow for the popup */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover {
+            color: #000; /* Change color on hover */
+            text-decoration: none; /* Remove underline */
+            cursor: pointer; /* Pointer cursor */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Send an Email</h1>
+        <form id="emailForm">
+            <input type="email" id="recipient_email" placeholder="Recipient Email" required>
+            <textarea id="message_body" placeholder="Message" required></textarea>
+            <button type="submit">Send Email</button>
+            <button type="button" id="resetButton">Reset</button>
+        </form>
+    </div>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <p id="popup-message"></p>
+        </div>
+    </div>
+
+    <script>
+        $('#emailForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = {
+                recipient_email: $('#recipient_email').val(),
+                message_body: $('#message_body').val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '/send_email',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    $('#popup-message').text(response.success ? 'Email sent successfully!' : response.error);
+                    $('#popup').show();
+                }
+            });
+        });
+
+        $('#resetButton').on('click', function() {
+            $('#recipient_email').val('');  // Clear the recipient email field
+            $('#message_body').val('');     // Clear the message body field
+        });
+
+        function closePopup() {
+            $('#popup').hide();
+        }
+    </script>
+</body>
+</html>
